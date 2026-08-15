@@ -106,6 +106,16 @@ wss.on('connection', (browser, req) => {
   let upstreamOpen = false
   let browserOpen = false
   let closed = false
+  let browserBytes = 0
+  let browserMessages = 0
+  const upstreamEvents = {}
+  let summarized = false
+
+  const summarize = (why) => {
+    if (summarized) return
+    summarized = true
+    log('session summary', { why, model, api, browserMessages, browserBytes, upstreamEvents })
+  }
 
   upstream.on('open', () => {
     upstreamOpen = true
@@ -117,6 +127,8 @@ wss.on('connection', (browser, req) => {
 
   browser.on('message', (data, isBinary) => {
     const payload = isBinary ? data : data.toString()
+    browserMessages += 1
+    if (isBinary) browserBytes += data.length
     if (upstreamOpen && upstream.readyState === 1) {
       upstream.send(payload)
     } else {
@@ -125,6 +137,13 @@ wss.on('connection', (browser, req) => {
   })
 
   upstream.on('message', (data, isBinary) => {
+    if (!isBinary) {
+      try {
+        const message = JSON.parse(data.toString())
+        const event = message.header?.event || message.type
+        if (event !== undefined) upstreamEvents[event] = (upstreamEvents[event] || 0) + 1
+      } catch {}
+    }
     if (browserOpen && browser.readyState === 1) {
       browser.send(data, { binary: isBinary })
     }
@@ -132,6 +151,7 @@ wss.on('connection', (browser, req) => {
 
   browser.on('close', () => {
     browserOpen = false
+    summarize('browser close')
     if (!closed) {
       closed = true
       try { if (upstream.readyState < 2) upstream.close(1000) } catch {}
@@ -140,6 +160,7 @@ wss.on('connection', (browser, req) => {
 
   upstream.on('close', () => {
     upstreamOpen = false
+    summarize('upstream close')
     if (!closed) {
       closed = true
       try { if (browser.readyState < 2) browser.close(1011) } catch {}
@@ -152,6 +173,7 @@ wss.on('connection', (browser, req) => {
 
   upstream.on('error', (error) => {
     log('upstream error', model, error instanceof Error ? error.message : String(error))
+    summarize('upstream error')
     if (!closed) {
       closed = true
       try { if (browser.readyState < 2) browser.close(1011, 'upstream error') } catch {}
