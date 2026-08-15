@@ -142,6 +142,11 @@ wss.on('connection', (browser, req) => {
         const message = JSON.parse(data.toString())
         const event = message.header?.event || message.type
         if (event !== undefined) upstreamEvents[event] = (upstreamEvents[event] || 0) + 1
+        if (event === 'result-generated') {
+          const text = message.payload?.output?.sentence?.text
+          const ended = message.payload?.output?.sentence?.sentence_end === true
+          if (typeof text === 'string' && text !== '') log('upstream text', ended ? 'FINAL' : 'draft', text.slice(0, 120))
+        }
       } catch {}
     }
     if (browserOpen && browser.readyState === 1) {
