@@ -5,10 +5,11 @@
 - 🎤 在**输入框发送键左侧**新增麦克风按钮，点击开始录音，再点一次停止并自动转写、插入输入框；录音时按钮显示声纹动画，转写时显示转圈；
 - ⌨️ 全局快捷键：**按住右 Alt 说话，松手即停止并转写**（可关闭，自动忽略 AltGr）；
 - ⚙️ 在 **设置 → 语音输入**（或 设置 → 插件 → 语音输入）提供完整配置页；
-- 🔌 支持三种识别接口：
+- 🔌 支持四种识别接口：
   1. **浏览器本地识别**（Web Speech API，免费、无需 Key，仅 Chrome / Edge）；
   2. **OpenAI 兼容接口**（`/audio/transcriptions`，适用于 OpenAI、Groq、SiliconFlow、本地 faster-whisper 等）；
   3. **自定义 JSON 接口**（音频 base64 放入 JSON 请求体，可对接任意自建服务）；
+  4. **实时流式接口**（`fun-asr-flash-8k-realtime` / Qwen-ASR，边说边转写，需本地鉴权代理）；
 - 📥 **支持导入 / 导出 JSON 配置**，方便备份、分享或批量部署（“自定义导入 API”）。
 
 配置与 API Key 只保存在浏览器 `localStorage`，不会上传到 DeepSeek Harness 服务端。
@@ -174,6 +175,28 @@ dsh plugin --profile web remove @lbxc/dsh-voice-input
 
 > API Key 会自动以 `Authorization: Bearer <key>` 发送；自定义 Header 中的
 > `Authorization` 会覆盖自动值。
+
+### 方式 D：Fun-ASR Realtime（阿里云百炼实时流式）
+
+用于 `fun-asr-flash-8k-realtime`、`qwen3-asr-flash-realtime` 等**实时**模型：
+说话的同时流式转写，配合「按住右 Alt 说话、松手结束」体验最佳。
+
+1. 在插件目录启动鉴权代理（浏览器不能给百炼 WebSocket 加 `Authorization` 头，
+   密钥只保存在代理进程的环境变量里）：
+
+```bash
+DASHSCOPE_API_KEY=sk-你的百炼密钥 node scripts/dashscope-realtime-proxy.mjs
+# 默认监听 ws://127.0.0.1:8787/ws；健康检查：http://127.0.0.1:8787/health
+```
+
+2. 进入 设置 → 语音输入，接口模式选「**实时流式接口（Fun-ASR Realtime / Qwen-ASR）**」；
+3. 「快速预设」选「Fun-ASR Flash 8K Realtime（百炼实时）」，会自动填入
+   代理地址 `ws://127.0.0.1:8787/ws` 和模型 `fun-asr-flash-8k-realtime`；
+4. 语言填 `zh`（可选），提示词可填专有名词帮助识别；
+5. 回到对话页按住右 Alt 说话，松手自动提交识别并插入文本。
+
+> 注意：该模式需要 Chrome / Edge、麦克风权限，并且代理进程保持运行。
+> 代理只把 WebSocket 数据转发到 `wss://dashscope.aliyuncs.com/api-ws/v1/realtime`。
 
 ---
 
@@ -344,7 +367,8 @@ voice_input/
 │   └── client.js          # browser 半身：输入框按钮 + 设置页 + 录音/转写
 ├── config.example.json    # 配置导入示例
 ├── scripts/
-│   └── smoke-test.mjs     # Node 冒烟测试（mock 加载 client 工厂并渲染组件）
+│   ├── smoke-test.mjs               # Node 冒烟测试（mock 加载 client 工厂并渲染组件）
+│   └── dashscope-realtime-proxy.mjs # 百炼实时 ASR 的本地 WebSocket 鉴权代理
 └── README.md              # 本文件
 ```
 
@@ -359,8 +383,12 @@ node scripts/smoke-test.mjs
 - 按钮注册在 dsh 官方槽位 **`conversation.input.right`**：
   “The right end of the same tool row, before the primary send button”，
   即输入框工具行右端、发送键左侧，与产品要求一致；
-- 配置页注册在 **`settings.plugins.tab`**，与 dsh 内置插件设置页同构；
+- 配置页注册在 **`settings.section`**（设置左侧导航的「语音输入」章节）和
+  **`settings.plugins.tab`**（设置 → 插件 → 语音输入）；
 - 客户端通过 `inputActions.setDraft(text)` 写回输入框草稿（dsh 标准
   `InputActions` 契约），不依赖任何 DOM hack；
+- 实时模式使用 `AudioWorklet` 采集 16 kHz PCM，按百炼 Qwen-ASR-Realtime
+  协议（`session.update` / `input_audio_buffer.append` / `session.finish`）
+  通过本地代理转发到百炼 WebSocket；
 - 插件为 dual-face bundle：`cordis.patch.yml` 插入 loader 行，
   `package.json` 的 `dsh.client` 声明浏览器半身。
