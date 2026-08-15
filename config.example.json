@@ -12,5 +12,6 @@
   "jsonTemplate": "{\n  \"audio\": \"{{audio}}\",\n  \"format\": \"{{format}}\",\n  \"model\": \"{{model}}\",\n  \"language\": \"{{language}}\"\n}",
   "responsePath": "text",
   "realtimeUrl": "ws://127.0.0.1:8787/ws",
-  "realtimeModel": "fun-asr-flash-8k-realtime"
+  "realtimeModel": "fun-asr-flash-8k-realtime",
+  "realtimeApi": "fun-asr"
 }

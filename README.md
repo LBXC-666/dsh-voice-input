@@ -190,7 +190,8 @@ node scripts/dashscope-realtime-proxy.mjs
 
 2. 进入 设置 → 语音输入，接口模式选「**实时流式接口（Fun-ASR Realtime / Qwen-ASR）**」；
 3. 「快速预设」选「Fun-ASR Flash 8K Realtime（百炼实时）」，会自动填入
-   代理地址 `ws://127.0.0.1:8787/ws` 和模型 `fun-asr-flash-8k-realtime`；
+   代理地址 `ws://127.0.0.1:8787/ws`、模型 `fun-asr-flash-8k-realtime`，
+   并把「实时协议」设为 **Fun-ASR（百炼 inference 协议）**；
 4. **API Key 可直接填在设置面板的「API Key（可选）」里**（保存在浏览器本地，
    通过本地代理的查询参数传递，插件会优先使用它）；
    留空时代理回退到环境变量 `DASHSCOPE_API_KEY`，二选一即可；

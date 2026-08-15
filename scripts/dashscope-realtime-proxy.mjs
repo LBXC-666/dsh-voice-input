@@ -47,8 +47,14 @@ const API_KEY = (process.env.DASHSCOPE_API_KEY || '').trim()
 
 const HOST = process.env.PROXY_HOST || '127.0.0.1'
 const PORT = Number(process.env.PROXY_PORT || 8787)
-const UPSTREAM = (process.env.DASHSCOPE_WS_BASE || 'wss://dashscope.aliyuncs.com/api-ws/v1/realtime').replace(/\/+$/, '')
 const DEFAULT_MODEL = 'fun-asr-flash-8k-realtime'
+// api=fun-asr  → 百炼 Fun-ASR 协议（/api-ws/v1/inference，fun-asr-flash-8k-realtime）
+// api=qwen    → Qwen-ASR-Realtime 协议（/api-ws/v1/realtime，qwen3-asr-flash-realtime）
+const BASE_BY_API = {
+  'fun-asr': 'wss://dashscope.aliyuncs.com/api-ws/v1/inference',
+  qwen: 'wss://dashscope.aliyuncs.com/api-ws/v1/realtime',
+  realtime: 'wss://dashscope.aliyuncs.com/api-ws/v1/realtime',
+}
 
 function log(...args) {
   console.log(new Date().toISOString(), '[dsh-voice-input-proxy]', ...args)
@@ -57,7 +63,7 @@ function log(...args) {
 const server = http.createServer((req, res) => {
   if (req.url === '/health') {
     res.writeHead(200, { 'content-type': 'application/json; charset=utf-8' })
-    res.end(JSON.stringify({ status: 'ok', model: DEFAULT_MODEL, upstream: UPSTREAM }))
+    res.end(JSON.stringify({ status: 'ok', model: DEFAULT_MODEL, api: 'fun-asr|qwen' }))
     return
   }
   res.writeHead(404, { 'content-type': 'text/plain; charset=utf-8' })
@@ -69,6 +75,8 @@ const wss = new WebSocketServer({ server, path: '/ws' })
 wss.on('connection', (browser, req) => {
   const query = new URLSearchParams((req.url || '').split('?')[1] || '')
   const model = (query.get('model') || DEFAULT_MODEL).trim()
+  const api = (query.get('api') || 'fun-asr').trim()
+  const upstreamBase = (process.env.DASHSCOPE_WS_BASE || BASE_BY_API[api] || BASE_BY_API['fun-asr']).replace(/\/+$/, '')
   const queryApiKey = (query.get('api_key') || query.get('api-key') || '').trim()
   const key = queryApiKey !== '' ? queryApiKey : API_KEY
   if (key === '') {
@@ -77,7 +85,7 @@ wss.on('connection', (browser, req) => {
     try { browser.close(1008, 'missing API key') } catch {}
     return
   }
-  const upstreamUrl = `${UPSTREAM}?model=${encodeURIComponent(model)}`
+  const upstreamUrl = `${upstreamBase}?model=${encodeURIComponent(model)}`
 
   let upstream
   try {
@@ -92,6 +100,7 @@ wss.on('connection', (browser, req) => {
     try { browser.close(1011, 'upstream connect failed') } catch {}
     return
   }
+  log('forwarding', api, model, '→', upstreamBase)
 
   const queue = []
   let upstreamOpen = false
@@ -154,6 +163,6 @@ wss.on('connection', (browser, req) => {
 })
 
 server.listen(PORT, HOST, () => {
-  log(`listening on ws://${HOST}:${PORT}/ws → ${UPSTREAM}?model=${DEFAULT_MODEL}`)
+  log(`listening on ws://${HOST}:${PORT}/ws → api=fun-asr|qwen (model default ${DEFAULT_MODEL})`)
   log(API_KEY !== '' ? 'key source: DASHSCOPE_API_KEY (plugin settings can override per connection)' : 'key source: plugin settings query parameter (DASHSCOPE_API_KEY is unset)')
 })
