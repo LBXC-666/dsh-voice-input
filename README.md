@@ -281,6 +281,8 @@ node scripts/dashscope-realtime-proxy.mjs
 
 配置位置：**设置 → 语音输入 → 文本整理（双击右 Alt 录音后整理）**：
 
+> 「启用文本整理」开关默认开启；关闭后双击右 Alt 与普通录音完全相同，识别结果直接插入、不调用模型。
+
 | 字段 | 说明 |
 |---|---|
 | 模型接口地址 | 例如 `https://api.deepseek.com/v1` 或 `https://dashscope.aliyuncs.com/compatible-mode/v1` |
