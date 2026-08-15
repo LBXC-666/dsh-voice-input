@@ -1,0 +1,13 @@
+# dsh-voice-input bundle patch
+#
+# 将一个 dual-face 插件行插入 web profile 的插件阵容：
+#   - node 半身（exports "."）故意保持空实现，本插件全部逻辑在浏览器端；
+#   - browser 半身（package.json 里的 `dsh.client` 声明，由 lib/client.js 提供）
+#     在 Web GUI 中挂载：输入框发送键左侧的语音按钮 + 设置 → 插件 里的配置页。
+#
+# 安装（推荐）：
+#   dsh plugin --profile web add link:<本目录>
+# 然后重启 dsh web 并刷新页面。
+- insert:
+    - id: voice-input
+      name: '@lbxc/dsh-voice-input'

@@ -1,0 +1,14 @@
+{
+  "mode": "openai",
+  "preset": "openai",
+  "endpoint": "https://api.openai.com/v1/audio/transcriptions",
+  "apiKey": "在这里填你的API Key",
+  "model": "whisper-1",
+  "language": "zh",
+  "prompt": "",
+  "headers": {},
+  "shortcutEnabled": true,
+  "customUrl": "",
+  "jsonTemplate": "{\n  \"audio\": \"{{audio}}\",\n  \"format\": \"{{format}}\",\n  \"model\": \"{{model}}\",\n  \"language\": \"{{language}}\"\n}",
+  "responsePath": "text"
+}

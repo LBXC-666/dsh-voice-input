@@ -1,0 +1,35 @@
+{
+  "name": "@lbxc/dsh-voice-input",
+  "version": "1.0.0",
+  "description": "DeepSeek Harness Web GUI 语音输入插件：在输入框发送键左侧添加麦克风按钮，支持浏览器本地识别、OpenAI 兼容语音转写接口和自定义 JSON 接口，配置可导入/导出。",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./package.json": "./package.json"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "inject": [
+        "@deepseek-ai/dsh-client-runtime",
+        "@deepseek-ai/dsh-client-locale",
+        "@deepseek-ai/dsh-client-ui-settings"
+      ],
+      "platform": "web"
+    }
+  },
+  "peerDependencies": {
+    "react": "^18.2.0"
+  },
+  "files": [
+    "lib/**/*.js",
+    "cordis.patch.yml",
+    "README.md",
+    "config.example.json"
+  ],
+  "license": "MIT"
+}
