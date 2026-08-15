@@ -26,6 +26,13 @@
 import { createRequire } from 'node:module'
 import http from 'node:http'
 import path from 'node:path'
+import fs from 'node:fs'
+
+const DUMP_AUDIO = process.env.PROXY_DUMP_AUDIO === '1'
+const DUMP_PATH = process.env.PROXY_DUMP_PATH || '/tmp/dsh-voice-input-audio.pcm'
+if (DUMP_AUDIO) {
+  try { fs.writeFileSync(DUMP_PATH, Buffer.alloc(0)) } catch {}
+}
 
 const dshHome = process.env.DSH_HOME || path.join(process.env.HOME || '', '.dsh')
 let wsMod = null
@@ -128,7 +135,12 @@ wss.on('connection', (browser, req) => {
   browser.on('message', (data, isBinary) => {
     const payload = isBinary ? data : data.toString()
     browserMessages += 1
-    if (isBinary) browserBytes += data.length
+    if (isBinary) {
+      browserBytes += data.length
+      if (DUMP_AUDIO) {
+        try { fs.appendFileSync(DUMP_PATH, data) } catch {}
+      }
+    }
     if (upstreamOpen && upstream.readyState === 1) {
       upstream.send(payload)
     } else {
