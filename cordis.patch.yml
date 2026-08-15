@@ -5,7 +5,9 @@
 #   - browser 半身（package.json 里的 `dsh.client` 声明，由 lib/client.js 提供）
 #     在 Web GUI 中挂载：输入框发送键左侧的语音按钮 + 设置 → 插件 里的配置页。
 #
-# 安装（推荐）：
+# 安装（推荐，从 GitHub）：
+#   dsh plugin --profile web add github:LBXC-666/dsh-voice-input
+# 本地目录安装：
 #   dsh plugin --profile web add link:<本目录>
 # 然后重启 dsh web 并刷新页面。
 - insert:
