@@ -99,7 +99,7 @@ console.log('VoiceSettingsPanel HTML length:', tabHtml.length)
 const keydown = windowListeners.filter((l) => l.type === 'keydown' && l.fn)
 const keyup = windowListeners.filter((l) => l.type === 'keyup' && l.fn)
 if (keydown.length !== 2) throw new Error('expected two global keydown listeners, got ' + keydown.length)
-if (keyup.length !== 1) throw new Error('expected one global keyup listener, got ' + keyup.length)
+if (keyup.length !== 2) throw new Error('expected two global keyup listeners, got ' + keyup.length)
 let prevented = 0
 const fakeEvent = (overrides) => ({
   key: 'Alt', code: 'AltRight', location: 2, repeat: false, isComposing: false,
@@ -118,7 +118,10 @@ for (const listener of keydown) {
   handler(fakeEvent({ getModifierState: () => true })) // AltGraph：忽略
   handler(altSpace)                       // Alt+Space：由另一个 handler 接管
 }
-keyup[0].fn(rightAlt)                     // 松右 Alt：停止
+for (const listener of keyup) {
+  listener.fn(rightAlt)                     // 松右 Alt：停止
+  listener.fn(altSpace)                     // 松空格：停止（Alt+Space 录音同样适用）
+}
 if (prevented !== 2) throw new Error('shortcut filtering wrong: prevented=' + prevented)
 console.log('right-alt + alt-space listeners filtered correctly (prevented:', prevented + ')')
 
