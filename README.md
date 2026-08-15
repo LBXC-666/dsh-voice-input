@@ -10,7 +10,8 @@
   2. **OpenAI 兼容接口**（`/audio/transcriptions`，适用于 OpenAI、Groq、SiliconFlow、本地 faster-whisper 等）；
   3. **自定义 JSON 接口**（音频 base64 放入 JSON 请求体，可对接任意自建服务）；
   4. **实时流式接口**（`fun-asr-flash-8k-realtime` / Qwen-ASR，边说边转写，需本地鉴权代理）；
-- 📥 **支持导入 / 导出 JSON 配置**，方便备份、分享或批量部署（“自定义导入 API”）。
+- 📥 **支持导入 / 导出 JSON 配置**，方便备份、分享或批量部署（“自定义导入 API”）；
+- ✨ **文本整理（Alt+Space）**：把输入框原文交给 LLM 清洗并格式化为「目标 / 关键要求 / 补充信息」，提示词模板可自定义，结果自动写回输入框。
 
 配置与 API Key 只保存在浏览器 `localStorage`，不会上传到 DeepSeek Harness 服务端。
 
@@ -268,6 +269,38 @@ node scripts/dashscope-realtime-proxy.mjs
 - 可以在 设置 → 语音输入 中关闭「启用右 Alt 快捷键」（默认开启）。
 
 > 小提示：声纹/转圈动画都显示在发送键左侧的麦克风按钮上，快捷键与鼠标点击共用同一套状态。
+
+### 文本整理：Alt+Space
+
+把“发给 agent 之前的原文”清洗并格式化：
+
+1. 在输入框里输入（或语音录入）一段原始文本；
+2. 按 **Alt+Space**；
+3. 插件把原文发送给你配置的 OpenAI 兼容模型（`POST /chat/completions`）；
+4. 模型按提示词模板输出整理后的文本，并**直接替换输入框内容**。
+
+配置位置：**设置 → 语音输入 → 文本整理（Alt+Space）**：
+
+| 字段 | 说明 |
+|---|---|
+| 模型接口地址 | 例如 `https://api.deepseek.com/v1` 或 `https://dashscope.aliyuncs.com/compatible-mode/v1` |
+| 模型 | 例如 `deepseek-chat`、`qwen-plus` |
+| API Key | 留空则复用语音识别的 API Key |
+| 提示词模板 | 必须包含 `{{text}}` 占位符，输出格式可完全自定义 |
+
+默认模板输出：
+
+```text
+【目标】
+<一句话说明用户想达成什么>
+
+【关键要求】
+- <要点>
+- <要点>
+
+【补充信息】
+<其他有价值的信息；没有这一节就省略>
+```
 
 ---
 

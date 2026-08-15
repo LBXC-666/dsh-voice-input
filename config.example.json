@@ -14,5 +14,9 @@
   "realtimeUrl": "ws://127.0.0.1:8787/ws",
   "realtimeModel": "fun-asr-flash-8k-realtime",
   "realtimeApi": "fun-asr",
-  "micDeviceId": ""
+  "micDeviceId": "",
+  "formatterEndpoint": "https://api.deepseek.com/v1",
+  "formatterApiKey": "",
+  "formatterModel": "deepseek-chat",
+  "formatterTemplate": "请对下面的原始输入做清理与格式化。\n任务：提取用户的真正目标、所有关键要求和约束，去掉口语化、重复、错别字与无意义内容，但不要遗漏任何细节。\n严格按下面的格式输出（只输出整理后的内容，不要任何解释）：\n\n【目标】\n<一句话说明用户想达成什么>\n\n【关键要求】\n- <要点>\n- <要点>\n\n【补充信息】\n<其他有价值的信息；没有这一节就省略>\n\n原始输入：\n{{text}}"
 }

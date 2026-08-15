@@ -93,27 +93,33 @@ console.log('VoiceInputButton HTML:', buttonHtml.slice(0, 320).replace(/\n/g, ' 
 const tabHtml = renderToString(React.createElement(tabReg.Component, { t }))
 if (!tabHtml.includes('vi_root') || !tabHtml.includes('importGroup')) throw new Error('settings panel did not render')
 if (!tabHtml.includes('shortcutEnabled')) throw new Error('shortcut toggle missing from settings panel')
+if (!tabHtml.includes('formatterGroup')) throw new Error('formatter group missing from settings panel')
 console.log('VoiceSettingsPanel HTML length:', tabHtml.length)
 
 const keydown = windowListeners.filter((l) => l.type === 'keydown' && l.fn)
 const keyup = windowListeners.filter((l) => l.type === 'keyup' && l.fn)
-if (keydown.length !== 1) throw new Error('expected one global keydown listener, got ' + keydown.length)
+if (keydown.length !== 2) throw new Error('expected two global keydown listeners, got ' + keydown.length)
 if (keyup.length !== 1) throw new Error('expected one global keyup listener, got ' + keyup.length)
 let prevented = 0
 const fakeEvent = (overrides) => ({
   key: 'Alt', code: 'AltRight', location: 2, repeat: false, isComposing: false,
-  ctrlKey: false, metaKey: false, shiftKey: false,
+  altKey: false, ctrlKey: false, metaKey: false, shiftKey: false,
   getModifierState: () => false,
   preventDefault: () => { prevented++ },
   ...overrides,
 })
-keydown[0].fn(fakeEvent({}))                       // plain Right Alt: allowed
-keydown[0].fn(fakeEvent({ repeat: true }))         // key repeat: ignored
-keydown[0].fn(fakeEvent({ ctrlKey: true }))        // AltGr-style combo: ignored
-keydown[0].fn(fakeEvent({ getModifierState: () => true })) // AltGraph: ignored
-keydown[0].fn(fakeEvent({ key: 'Shift', code: 'ShiftRight', location: 2 })) // wrong key: ignored
-keyup[0].fn(fakeEvent({}))                         // release: allowed
-if (prevented !== 1) throw new Error('right-alt filtering wrong: prevented=' + prevented)
-console.log('right-alt hold-to-talk listeners filtered correctly (prevented:', prevented + ')')
+const rightAlt = fakeEvent({})
+const altSpace = fakeEvent({ key: ' ', code: 'Space', altKey: true, location: 0 })
+for (const listener of keydown) {
+  const handler = listener.fn
+  handler(rightAlt)                       // 右 Alt：由一个 handler 接管
+  handler(fakeEvent({ repeat: true }))    // 长按重复：忽略
+  handler(fakeEvent({ ctrlKey: true }))   // AltGr 组合：忽略
+  handler(fakeEvent({ getModifierState: () => true })) // AltGraph：忽略
+  handler(altSpace)                       // Alt+Space：由另一个 handler 接管
+}
+keyup[0].fn(rightAlt)                     // 松右 Alt：停止
+if (prevented !== 2) throw new Error('shortcut filtering wrong: prevented=' + prevented)
+console.log('right-alt + alt-space listeners filtered correctly (prevented:', prevented + ')')
 
 console.log('SMOKE TEST PASSED')
