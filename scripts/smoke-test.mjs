@@ -69,8 +69,10 @@ mod.apply(ctx)
 
 const buttonReg = regs.find((r) => r.options.name === 'conversation.input.right')
 const tabReg = regs.find((r) => r.options.name === 'settings.plugins.tab')
+const sectionReg = regs.find((r) => r.options.name === 'settings.section')
 if (!buttonReg || buttonReg.options.id !== 'voice-input') throw new Error('missing input.right registration')
 if (!tabReg || tabReg.options.id !== 'voice-input') throw new Error('missing settings tab registration')
+if (!sectionReg || sectionReg.options.id !== 'voice-input' || sectionReg.options.order !== 12) throw new Error('missing settings section registration')
 console.log('slots registered:', regs.map((r) => `${r.options.name}#${r.options.id} order=${r.options.order}`).join(' | '))
 
 const zhKeys = Object.keys(dictionaries.zh).sort()
@@ -94,7 +96,9 @@ if (!tabHtml.includes('shortcutEnabled')) throw new Error('shortcut toggle missi
 console.log('VoiceSettingsPanel HTML length:', tabHtml.length)
 
 const keydown = windowListeners.filter((l) => l.type === 'keydown' && l.fn)
+const keyup = windowListeners.filter((l) => l.type === 'keyup' && l.fn)
 if (keydown.length !== 1) throw new Error('expected one global keydown listener, got ' + keydown.length)
+if (keyup.length !== 1) throw new Error('expected one global keyup listener, got ' + keyup.length)
 let prevented = 0
 const fakeEvent = (overrides) => ({
   key: 'Alt', code: 'AltRight', location: 2, repeat: false, isComposing: false,
@@ -108,7 +112,8 @@ keydown[0].fn(fakeEvent({ repeat: true }))         // key repeat: ignored
 keydown[0].fn(fakeEvent({ ctrlKey: true }))        // AltGr-style combo: ignored
 keydown[0].fn(fakeEvent({ getModifierState: () => true })) // AltGraph: ignored
 keydown[0].fn(fakeEvent({ key: 'Shift', code: 'ShiftRight', location: 2 })) // wrong key: ignored
+keyup[0].fn(fakeEvent({}))                         // release: allowed
 if (prevented !== 1) throw new Error('right-alt filtering wrong: prevented=' + prevented)
-console.log('right-alt keydown listener filtered correctly (prevented:', prevented + ')')
+console.log('right-alt hold-to-talk listeners filtered correctly (prevented:', prevented + ')')
 
 console.log('SMOKE TEST PASSED')
