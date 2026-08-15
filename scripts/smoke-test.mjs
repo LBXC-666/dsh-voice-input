@@ -98,8 +98,8 @@ console.log('VoiceSettingsPanel HTML length:', tabHtml.length)
 
 const keydown = windowListeners.filter((l) => l.type === 'keydown' && l.fn)
 const keyup = windowListeners.filter((l) => l.type === 'keyup' && l.fn)
-if (keydown.length !== 2) throw new Error('expected two global keydown listeners, got ' + keydown.length)
-if (keyup.length !== 2) throw new Error('expected two global keyup listeners, got ' + keyup.length)
+if (keydown.length !== 1) throw new Error('expected one global keydown listener, got ' + keydown.length)
+if (keyup.length !== 1) throw new Error('expected one global keyup listener, got ' + keyup.length)
 let prevented = 0
 const fakeEvent = (overrides) => ({
   key: 'Alt', code: 'AltRight', location: 2, repeat: false, isComposing: false,
@@ -109,20 +109,18 @@ const fakeEvent = (overrides) => ({
   ...overrides,
 })
 const rightAlt = fakeEvent({})
-const altSpace = fakeEvent({ key: ' ', code: 'Space', altKey: true, location: 0 })
 for (const listener of keydown) {
   const handler = listener.fn
-  handler(rightAlt)                       // 右 Alt：由一个 handler 接管
+  handler(rightAlt)                       // 右 Alt：按住录音
   handler(fakeEvent({ repeat: true }))    // 长按重复：忽略
   handler(fakeEvent({ ctrlKey: true }))   // AltGr 组合：忽略
   handler(fakeEvent({ getModifierState: () => true })) // AltGraph：忽略
-  handler(altSpace)                       // Alt+Space：由另一个 handler 接管
+  handler(fakeEvent({ key: ' ', code: 'Space', altKey: true, location: 0 })) // 已移除的 Alt+Space：忽略
 }
 for (const listener of keyup) {
-  listener.fn(rightAlt)                     // 松右 Alt：停止
-  listener.fn(altSpace)                     // 松空格：停止（Alt+Space 录音同样适用）
+  listener.fn(rightAlt)                   // 松右 Alt：停止
 }
-if (prevented !== 2) throw new Error('shortcut filtering wrong: prevented=' + prevented)
-console.log('right-alt + alt-space listeners filtered correctly (prevented:', prevented + ')')
+if (prevented !== 1) throw new Error('shortcut filtering wrong: prevented=' + prevented)
+console.log('right-alt hold-to-talk listener filtered correctly (prevented:', prevented + ')')
 
 console.log('SMOKE TEST PASSED')
