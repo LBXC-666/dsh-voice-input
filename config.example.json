@@ -15,6 +15,7 @@
   "realtimeModel": "fun-asr-flash-8k-realtime",
   "realtimeApi": "fun-asr",
   "micDeviceId": "",
+  "micChannel": "auto",
   "formatterEndpoint": "https://api.deepseek.com/v1",
   "formatterApiKey": "",
   "formatterModel": "deepseek-chat",

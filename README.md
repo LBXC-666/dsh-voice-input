@@ -101,7 +101,7 @@ node scripts/dashscope-realtime-proxy.mjs
 | Fun-ASR Flash 8K Realtime | Fun-ASR（百炼 inference） | `fun-asr-flash-8k-realtime` |
 
 - API Key 可直接填在设置面板（通过本地代理 `api_key` 查询参数传递）；留空则代理使用环境变量 `DASHSCOPE_API_KEY`；
-- 可指定**麦克风设备**（避免选成立体声混音/回路设备）；
+- 可指定**麦克风设备**（避免选成立体声混音/回路设备）与**输入声道**（自动自适应或固定 1~4 声道）；
 - 推荐日常使用 **qwen3-asr-flash-realtime**：抗噪与识别稳定性更好；`fun-asr-flash-8k-realtime` 适合安静环境。
 
 ---
@@ -174,6 +174,7 @@ node scripts/dashscope-realtime-proxy.mjs
   "realtimeModel": "fun-asr-flash-8k-realtime",
   "realtimeApi": "fun-asr",
   "micDeviceId": "",
+  "micChannel": "auto",
   "formatterEndpoint": "https://api.deepseek.com/v1",
   "formatterApiKey": "",
   "formatterModel": "deepseek-chat",
