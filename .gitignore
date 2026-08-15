@@ -2,3 +2,6 @@ node_modules/
 *.log
 .DS_Store
 dsh-voice-input.config.json
+.env
+*.pcm
+dsh-voice-input-audio.pcm
