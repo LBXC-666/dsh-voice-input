@@ -1,6 +1,6 @@
 # @lbxc/dsh-voice-input
 
-给 **DeepSeek Harness Web GUI（dsh web）** 添加一个语音输入插件（AI生成）：
+给 **DeepSeek Harness Web GUI（dsh web）** 添加一个语音输入插件：
 
 - 🎤 在**输入框发送键左侧**新增麦克风按钮，点击开始录音，再点一次停止并自动转写、插入输入框；
 - ⌨️ 全局快捷键：按 **右 Alt** 开始/停止语音输入（可关闭，自动忽略 AltGr）；
@@ -270,7 +270,7 @@ Bundle 插件需要重启 `dsh web`；浏览器端可能需要强制刷新（Ctr
 
 ## 6. 发布到 GitHub（维护者）
 
-### 8.1 首次推送
+### 6.1 首次推送
 
 1. 在 GitHub 上新建一个**公开**仓库（例如 `dsh-voice-input`），不要勾选自动生成
    README / LICENSE（本目录已包含）；
@@ -291,7 +291,7 @@ git push -u origin main
 
 3. 推送后，任何人都可以用 1.1 节的 GitHub 命令安装。
 
-### 8.2 发布新版本
+### 6.2 发布新版本
 
 ```bash
 # 修改 package.json 的 version 后
@@ -309,7 +309,7 @@ dsh plugin --profile web add github:LBXC-666/dsh-voice-input#v1.1.0
 
 > `dsh plugin add` 会覆盖 profile 里同名的依赖规格，所以版本更新用同一条命令即可。
 
-### 8.3 注意事项
+### 6.3 注意事项
 
 - **仓库根目录必须是本插件目录**（`package.json` 在根目录），`github:` 安装才能直接
   找到 `dsh.bundle.patch`；如果是 monorepo 子目录，需用
