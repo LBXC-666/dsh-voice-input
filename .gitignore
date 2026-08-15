@@ -5,3 +5,4 @@ dsh-voice-input.config.json
 .env
 *.pcm
 dsh-voice-input-audio.pcm
+dist/
