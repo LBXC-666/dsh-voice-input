@@ -13,5 +13,6 @@
   "responsePath": "text",
   "realtimeUrl": "ws://127.0.0.1:8787/ws",
   "realtimeModel": "fun-asr-flash-8k-realtime",
-  "realtimeApi": "fun-asr"
+  "realtimeApi": "fun-asr",
+  "micDeviceId": ""
 }
