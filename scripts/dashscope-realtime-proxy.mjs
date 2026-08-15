@@ -7,9 +7,14 @@
  * 插件/浏览器永远接触不到 API Key。
  *
  * 启动：
- *   DASHSCOPE_API_KEY=sk-你的百炼密钥 node scripts/dashscope-realtime-proxy.mjs
+ *   node scripts/dashscope-realtime-proxy.mjs
+ *
+ * API Key 来源（按优先级）：
+ *   1. 插件设置面板里填的 API Key（通过 WS 查询参数 api_key 传入，浏览器本地保存）
+ *   2. 环境变量 DASHSCOPE_API_KEY
  *
  * 可选环境变量：
+ *   DASHSCOPE_API_KEY 百炼密钥（可不设，改用插件设置面板的 Key）
  *   PROXY_HOST        监听地址，默认 127.0.0.1
  *   PROXY_PORT        监听端口，默认 8787
  *   DASHSCOPE_WS_BASE 百炼实时 WS 地址，默认
@@ -39,11 +44,6 @@ if (wsMod === null) {
 const { WebSocketServer, WebSocket } = wsMod
 
 const API_KEY = (process.env.DASHSCOPE_API_KEY || '').trim()
-if (API_KEY === '') {
-  console.error('[dsh-voice-input] 缺少 DASHSCOPE_API_KEY 环境变量')
-  console.error('[dsh-voice-input] 示例：DASHSCOPE_API_KEY=sk-xxx node scripts/dashscope-realtime-proxy.mjs')
-  process.exit(1)
-}
 
 const HOST = process.env.PROXY_HOST || '127.0.0.1'
 const PORT = Number(process.env.PROXY_PORT || 8787)
@@ -69,13 +69,21 @@ const wss = new WebSocketServer({ server, path: '/ws' })
 wss.on('connection', (browser, req) => {
   const query = new URLSearchParams((req.url || '').split('?')[1] || '')
   const model = (query.get('model') || DEFAULT_MODEL).trim()
+  const queryApiKey = (query.get('api_key') || query.get('api-key') || '').trim()
+  const key = queryApiKey !== '' ? queryApiKey : API_KEY
+  if (key === '') {
+    log('missing API key: set it in the plugin settings or via DASHSCOPE_API_KEY')
+    try { browser.send(JSON.stringify({ type: 'error', error: { message: 'missing API key' } })) } catch {}
+    try { browser.close(1008, 'missing API key') } catch {}
+    return
+  }
   const upstreamUrl = `${UPSTREAM}?model=${encodeURIComponent(model)}`
 
   let upstream
   try {
     upstream = new WebSocket(upstreamUrl, {
       headers: {
-        Authorization: `Bearer ${API_KEY}`,
+        Authorization: `Bearer ${key}`,
         'user-agent': 'dsh-voice-input/1.0',
       },
     })
@@ -147,4 +155,5 @@ wss.on('connection', (browser, req) => {
 
 server.listen(PORT, HOST, () => {
   log(`listening on ws://${HOST}:${PORT}/ws → ${UPSTREAM}?model=${DEFAULT_MODEL}`)
+  log(API_KEY !== '' ? 'key source: DASHSCOPE_API_KEY (plugin settings can override per connection)' : 'key source: plugin settings query parameter (DASHSCOPE_API_KEY is unset)')
 })

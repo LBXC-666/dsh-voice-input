@@ -181,19 +181,21 @@ dsh plugin --profile web remove @lbxc/dsh-voice-input
 用于 `fun-asr-flash-8k-realtime`、`qwen3-asr-flash-realtime` 等**实时**模型：
 说话的同时流式转写，配合「按住右 Alt 说话、松手结束」体验最佳。
 
-1. 在插件目录启动鉴权代理（浏览器不能给百炼 WebSocket 加 `Authorization` 头，
-   密钥只保存在代理进程的环境变量里）：
+1. 在插件目录启动鉴权代理（浏览器不能给百炼 WebSocket 加 `Authorization` 头）：
 
 ```bash
-DASHSCOPE_API_KEY=sk-你的百炼密钥 node scripts/dashscope-realtime-proxy.mjs
+node scripts/dashscope-realtime-proxy.mjs
 # 默认监听 ws://127.0.0.1:8787/ws；健康检查：http://127.0.0.1:8787/health
 ```
 
 2. 进入 设置 → 语音输入，接口模式选「**实时流式接口（Fun-ASR Realtime / Qwen-ASR）**」；
 3. 「快速预设」选「Fun-ASR Flash 8K Realtime（百炼实时）」，会自动填入
    代理地址 `ws://127.0.0.1:8787/ws` 和模型 `fun-asr-flash-8k-realtime`；
-4. 语言填 `zh`（可选），提示词可填专有名词帮助识别；
-5. 回到对话页按住右 Alt 说话，松手自动提交识别并插入文本。
+4. **API Key 可直接填在设置面板的「API Key（可选）」里**（保存在浏览器本地，
+   通过本地代理的查询参数传递，插件会优先使用它）；
+   留空时代理回退到环境变量 `DASHSCOPE_API_KEY`，二选一即可；
+5. 语言填 `zh`（可选），提示词可填专有名词帮助识别；
+6. 回到对话页按住右 Alt 说话，松手自动提交识别并插入文本。
 
 > 注意：该模式需要 Chrome / Edge、麦克风权限，并且代理进程保持运行。
 > 代理只把 WebSocket 数据转发到 `wss://dashscope.aliyuncs.com/api-ws/v1/realtime`。
