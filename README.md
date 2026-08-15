@@ -1,6 +1,6 @@
 # @lbxc/dsh-voice-input
 
-给 **DeepSeek Harness Web GUI（dsh web）** 添加一个语音输入插件：
+给 **DeepSeek Harness Web GUI（dsh web）** 添加一个语音输入插件（AI生成）：
 
 - 🎤 在**输入框发送键左侧**新增麦克风按钮，点击开始录音，再点一次停止并自动转写、插入输入框；
 - ⌨️ 全局快捷键：按 **右 Alt** 开始/停止语音输入（可关闭，自动忽略 AltGr）；
@@ -29,28 +29,28 @@
 dsh plugin --profile web add link:<本目录>
 ```
 
-**从 GitHub 安装（推荐给其他使用者）**：
-
-```bash
-# 默认分支
-dsh plugin --profile web add github:<你的GitHub用户名>/<仓库名>
-
-# 指定分支 / tag（建议发布时打 tag，让使用者锁定版本）
-dsh plugin --profile web add github:<你的GitHub用户名>/<仓库名>#v1.0.0
-
-# 完整 URL 形式
-dsh plugin --profile web add https://github.com/<你的GitHub用户名>/<仓库名>.git#main
-```
-
-> 以上命令会执行 `pnpm add`，自动 clone 仓库并按其 `package.json` 的
-> `dsh.bundle.patch` 声明加入 bundle 组合层。私有仓库需要先配置 GitHub 凭据。
-
 该命令会：
 
 - 在 `~/.dsh/profiles/web/package.json` 的 `dependencies` 里写入
   `"@lbxc/dsh-voice-input": "link:<本目录>"`；
 - 识别到包内 `dsh.bundle.patch` 声明，把 `@lbxc/dsh-voice-input` 加入
   `dsh.profile.bundles` 的 bundle 组合层。
+
+**从 GitHub 安装（推荐给其他使用者）**：
+
+```bash
+# 默认分支
+dsh plugin --profile web add github:LBXC-666/dsh-voice-input
+
+# 指定分支 / tag（建议发布时打 tag，让使用者锁定版本）
+dsh plugin --profile web add github:LBXC-666/dsh-voice-input#v1.0.0
+
+# 完整 URL 形式
+dsh plugin --profile web add https://github.com/LBXC-666/dsh-voice-input.git#main
+```
+
+> 以上命令会执行 `pnpm add`，自动 clone 仓库并按其 `package.json` 的
+> `dsh.bundle.patch` 声明加入 bundle 组合层。私有仓库需要先配置 GitHub 凭据。
 
 如果你不使用 `dsh plugin`，也可以手动编辑 `~/.dsh/profiles/web/package.json`：
 
@@ -279,13 +279,13 @@ Bundle 插件需要重启 `dsh web`；浏览器端可能需要强制刷新（Ctr
 ```bash
 cd /home/lbxc/voice_input
 git init -b main
-git config user.name  "你的名字"
-git config user.email "你的邮箱"
+git config user.name  "LBXC-666"
+git config user.email "2025051611057@stu.cqnu.edu.cn"
 
 git add .
 git commit -m "dsh-voice-input: initial release"
 git branch -M main
-git remote add origin https://github.com/<你的GitHub用户名>/dsh-voice-input.git
+git remote add origin https://github.com/LBXC-666/dsh-voice-input.git
 git push -u origin main
 ```
 
@@ -304,7 +304,7 @@ git push origin main --tags
 使用者升级（锁定 tag 时）：
 
 ```bash
-dsh plugin --profile web add github:<你的GitHub用户名>/dsh-voice-input#v1.1.0
+dsh plugin --profile web add github:LBXC-666/dsh-voice-input#v1.1.0
 ```
 
 > `dsh plugin add` 会覆盖 profile 里同名的依赖规格，所以版本更新用同一条命令即可。
