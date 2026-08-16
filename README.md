@@ -131,6 +131,7 @@ node scripts/dashscope-realtime-proxy.mjs
 | API Key | 留空则复用语音识别的 API Key |
 | 提示词模板 | 必须含 `{{text}}`；可选用 `{{context}}` 注入对话上下文 |
 | 纠错提示词（右键第一轮） | 只纠正错别字/口语化，输出干净文本；支持 `{{context}}` / `{{text}}` |
+| 格式化提示词（右键第二轮） | 生成固定格式，不注入上下文；支持 `{{text}}` |
 | 关闭模型思考 | 默认开启：请求附带 `enable_thinking=false` / `thinking: disabled` |
 | 注入当前对话上下文 | 默认开启：最近 4 条用户/助手消息，各截断 150 字 |
 
