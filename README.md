@@ -132,6 +132,7 @@ node scripts/dashscope-realtime-proxy.mjs
 | 提示词模板 | 必须含 `{{text}}`；可选用 `{{context}}` 注入对话上下文 |
 | 纠错提示词（右键第一轮） | 只纠正错别字/口语化，输出干净文本；支持 `{{context}}` / `{{text}}` |
 | 格式化提示词（右键第二轮） | 生成固定格式，不注入上下文；支持 `{{text}}` |
+| 启用右键第二轮优化 | 默认开启；关闭后右键只做第一轮纠错，不调用第二轮 |
 | 关闭模型思考 | 默认开启：请求附带 `enable_thinking=false` / `thinking: disabled` |
 | 注入当前对话上下文 | 默认开启：最近 2 条用户/助手消息完整注入；超长时只保留结尾 800 字，避免丢失最新结论 |
 
@@ -183,6 +184,7 @@ node scripts/dashscope-realtime-proxy.mjs
   "formatterModel": "deepseek-chat",
   "formatterNoThinking": true,
   "formatterWithContext": true,
+  "formatterTwoPassEnabled": true,
   "formatterTemplate": "…{{context}}…{{text}}…"
 }
 ```
