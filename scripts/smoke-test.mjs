@@ -88,6 +88,7 @@ const buttonHtml = renderToString(React.createElement(buttonReg.Component, {
   inputActions: { setDraft: () => {} },
 }))
 if (!buttonHtml.includes('vi_micButton')) throw new Error('button did not render')
+if (buttonHtml.includes('vi_autoButton') || buttonHtml.includes('⚡')) throw new Error('auto optimize must be switch-only and must not render a foreground button')
 console.log('VoiceInputButton HTML:', buttonHtml.slice(0, 320).replace(/\n/g, ' '))
 
 const tabHtml = renderToString(React.createElement(tabReg.Component, { t }))
