@@ -86,7 +86,11 @@ dsh plugin --profile web remove @lbxc/dsh-voice-input
 
 ### 方式 D：实时流式接口（推荐日常使用）
 
-启动本地鉴权代理：
+**本地鉴权代理会跟随 dsh web 自动启动**：只要插件已安装，重启电脑后启动 dsh web 时，插件的 node 半身会自动拉起代理并做健康检查；代理已存在则直接复用，dsh 停服时由插件启动的代理会一并停止。日志写入 `~/.dsh/logs/dsh-voice-input-proxy.log`。
+
+> 插件自动启动的代理使用当前环境变量；`DASHSCOPE_API_KEY` 需要在 dsh web 的启动环境中配置。如果 dsh web 本身没有配置开机自启，请先让 dsh web 随系统启动，代理才会跟随启动。
+
+手动启动仅用于调试或独立使用：
 
 ```bash
 # 代理默认监听 ws://127.0.0.1:8787/ws，健康检查 http://127.0.0.1:8787/health

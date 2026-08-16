@@ -42,6 +42,10 @@ globalThis.localStorage = {
 
 await import(pathToFileURL('/home/lbxc/voice_input/lib/client.js').href)
 
+const hostMod = await import(pathToFileURL('/home/lbxc/voice_input/lib/index.js').href)
+if (JSON.stringify(hostMod.inject) !== '[]' || typeof hostMod.apply !== 'function') throw new Error('host half must export inject=[] and apply()')
+console.log('host plugin exports OK (proxy auto-start manager)')
+
 if (!captured.handoff) throw new Error('client.js did not register its factory')
 const mod = captured.handoff.factory((spec) => {
   if (spec === 'react') return React
