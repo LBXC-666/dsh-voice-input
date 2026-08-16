@@ -10,7 +10,7 @@
   2. OpenAI 兼容 `/audio/transcriptions`（OpenAI / Groq / SiliconFlow / 本地 faster-whisper）；
   3. 自定义 JSON 接口（音频 base64）；
   4. 实时流式接口（**fun-asr-flash-8k-realtime** 与 **qwen3-asr-flash-realtime**，边说边转写）；
-- ✨ 识别完成后麦克风左侧弹出 **AI 优化按钮**：一键把输入框内容交给 LLM 清洗并格式化为「目标 / 关键要求 / 补充信息」，提示词可自定义，可注入当前对话上下文、可关闭模型思考；
+- ✨ 识别完成后麦克风左侧弹出 **AI 优化按钮**：一键把输入框内容交给 LLM 清洗并格式化为「目标 / 关键要求 / 补充信息」，提示词可自定义，可注入当前对话上下文，**模型思考档位可选（默认低）**；
 - 📥 支持导入 / 导出 JSON 配置；
 - 🔐 API Key 只保存在浏览器 `localStorage`；百炼实时 Key 可通过本地代理查询参数传入，代理日志不打印密钥。
 
@@ -120,9 +120,10 @@ node scripts/dashscope-realtime-proxy.mjs
 2. **左键 ✨**：默认执行「一轮纠错」；
 3. **右键 ✨**：默认执行「一轮纠错 + 二轮格式化」；
 4. **⚡ 自动优化按钮**：按设置里的「自动优化模式」一键执行；
-5. **↶ 回退按钮**：优化前自动保存原文快照，一键恢复未优化文本；
-6. 结果**基于当前光标位置插入**（逐字打字机效果），不再是固定追加到末尾；
-7. 快捷键（可在设置中自定义，默认）：
+5. **自动优化开关**：打开后，每次语音转写完成都会**自动**按「自动优化模式」优化，不再需要手动点按钮；优化什么内容由「自动优化模式」决定（一轮纠错 / 二轮格式化 / 一轮+二轮）；
+6. **↶ 回退按钮**：优化前自动保存原文快照，一键恢复未优化文本；
+7. 结果**基于当前光标位置插入**（逐字打字机效果），不再是固定追加到末尾；
+8. 快捷键（可在设置中自定义，默认）：
    - `Alt+1`：一轮纠错
    - `Alt+2`：一轮 + 二轮
    - `Alt+3`：自动优化模式
@@ -135,11 +136,12 @@ node scripts/dashscope-realtime-proxy.mjs
 | 模型 | 例如 `deepseek-chat`、`qwen-plus` |
 | API Key | 留空则复用语音识别的 API Key |
 | 左键模式 / 右键模式 / 自动优化模式 | 可选：一轮纠错、二轮格式化、一轮 + 二轮 |
+| 自动优化开关 | 默认关闭；打开后转写完成自动执行「自动优化模式」 |
 | 一轮优化 / 二轮优化 / 自动优化快捷键 | 点击输入框后按下组合键录制 |
 | 纠错提示词（第一轮） | 只纠正错别字/口语化，支持 `{{context}}` / `{{text}}` |
 | 格式化提示词（第二轮） | 生成固定格式，不注入上下文；支持 `{{text}}` |
 | 启用右键第二轮优化 | 默认开启；关闭后任何“一轮 + 二轮”模式只执行第一轮 |
-| 关闭模型思考 | 默认开启：请求附带 `enable_thinking=false` / `thinking: disabled` |
+| 模型思考档位 | 关闭 / 低 / 中 / 高，默认**低**：低档思考可显著提高输出准确性，关闭最快；兼容 DeepSeek `thinking` 与 DashScope `enable_thinking` |
 | 注入当前对话上下文 | 默认开启：最近 2 条用户/助手消息完整注入；超长时只保留结尾 800 字，避免丢失最新结论 |
 
 默认输出格式：
@@ -188,9 +190,11 @@ node scripts/dashscope-realtime-proxy.mjs
   "formatterEndpoint": "https://api.deepseek.com/v1",
   "formatterApiKey": "",
   "formatterModel": "deepseek-chat",
-  "formatterNoThinking": true,
+  "formatterNoThinking": false,
+  "formatterThinking": "low",
   "formatterWithContext": true,
   "formatterTwoPassEnabled": true,
+  "autoOptimizeEnabled": false,
   "formatterTemplate": "…{{context}}…{{text}}…"
 }
 ```
