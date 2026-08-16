@@ -19,7 +19,6 @@
   "formatterEndpoint": "https://api.deepseek.com/v1",
   "formatterApiKey": "",
   "formatterModel": "deepseek-chat",
-  "formatterNoThinking": false,
   "formatterThinking": "low",
   "formatterWithContext": true,
   "formatterTwoPassEnabled": true,
@@ -27,10 +26,6 @@
   "clickLeftMode": "round1",
   "clickRightMode": "round1+round2",
   "autoMode": "round1+round2",
-  "hotkeyPass1": "Alt+1",
-  "hotkeyPass2": "Alt+2",
-  "hotkeyAuto": "Alt+3",
   "formatterFixTemplate": "【当前对话上下文（仅用于理解指代和专有名词）】\n{{context}}\n上下文输入截止\n\n请只纠正下面文本中的错别字、标点和明显口语化错误，或语音识别错误，保持原意和结构，去除‘额’、‘嗯’等语气词，不要改写、不要解释，直接输出纠正后的文本：\n{{text}}",
-  "formatterFinalTemplate": "请对下面的原始输入做格式化。\n任务：提取用户的真正目标、所有关键要求和约束，但不要遗漏任何细节。\n但不要编造上下文里没有的信息。\n按下面的格式输出（只输出整理后的内容，不要任何解释；仅匹配到相关内容时输出对应格式（如：我想完成xxx任务就是目标，修复xxx就是问题））：\n\n 示例：\n     先一句话说明用户想达成什么\n     目标：\n     1. 完成项目启动\n     2. 确定时间节点\n     项目现状：\n     1. 模块已经完成\n     要求：\n     1. 每周汇报进度\n     项目问题：\n     1. 编译报错\n【补充信息】\n<其他有价值的信息；没有就省略>\n\n原始输入：\n{{text}}\n原始输入截止",
-  "formatterTemplate": "请对下面的原始输入做格式化。\n任务：提取用户的真正目标、所有关键要求和约束，但不要遗漏任何细节。\n但不要编造上下文里没有的信息。\n按下面的格式输出（只输出整理后的内容，不要任何解释；仅匹配到相关内容时输出对应格式（如：我想完成xxx任务就是目标，修复xxx就是问题））：\n\n 示例：\n     先一句话说明用户想达成什么\n     目标：\n     1. 完成项目启动\n     2. 确定时间节点\n     项目现状：\n     1. 模块已经完成\n     要求：\n     1. 每周汇报进度\n     项目问题：\n     1. 编译报错\n【补充信息】\n<其他有价值的信息；没有就省略>\n\n原始输入：\n{{text}}\n原始输入截止"
+  "formatterFinalTemplate": "请对下面的原始输入做格式化。\n任务：提取用户的真正目标、所有关键要求和约束，但不要遗漏任何细节。\n但不要编造上下文里没有的信息。\n按下面的格式输出（只输出整理后的内容，不要任何解释；仅匹配到相关内容时输出对应格式（如：我想完成xxx任务就是目标，修复xxx就是问题））：\n\n 示例：\n     先一句话说明用户想达成什么\n     目标：\n     1. 完成项目启动\n     2. 确定时间节点\n     项目现状：\n     1. 模块已经完成\n     要求：\n     1. 每周汇报进度\n     项目问题：\n     1. 编译报错\n【补充信息】\n<其他有价值的信息；没有就省略>\n\n原始输入：\n{{text}}\n原始输入截止"
 }

@@ -120,15 +120,12 @@ node scripts/dashscope-realtime-proxy.mjs
 2. **左键 ✨**：默认执行「一轮纠错」；
 3. **右键 ✨**：默认执行「一轮纠错 + 二轮格式化」；
 4. **⚡ 自动优化按钮**：按设置里的「自动优化模式」一键执行；
-5. **自动优化开关**：打开后，每次语音转写完成都会**自动**按「自动优化模式」优化，不再需要手动点按钮；优化什么内容由「自动优化模式」决定（一轮纠错 / 二轮格式化 / 一轮+二轮）；
+5. **自动优化开关**：打开后，每次语音转写完成都会**自动**按「自动优化模式」优化，直接进入下一步处理，不需要任何快捷键；优化什么内容由「自动优化模式」决定（一轮纠错 / 二轮格式化 / 一轮+二轮）；
 6. **↶ 回退按钮**：优化前自动保存原文快照，一键恢复未优化文本；
 7. 结果**基于当前光标位置插入**（逐字打字机效果），不再是固定追加到末尾；
-8. 快捷键（可在设置中自定义，默认）：
-   - `Alt+1`：一轮纠错
-   - `Alt+2`：一轮 + 二轮
-   - `Alt+3`：自动优化模式
+8. 除语音输入的右 Alt 按住说话外，不再注册任何优化快捷键。
 
-配置位置：设置 → 语音输入 → 文本整理：
+配置位置：设置 → 语音输入 → 文本整理（各分类可折叠）：
 
 | 字段 | 说明 |
 |---|---|
@@ -136,10 +133,9 @@ node scripts/dashscope-realtime-proxy.mjs
 | 模型 | 例如 `deepseek-chat`、`qwen-plus` |
 | API Key | 留空则复用语音识别的 API Key |
 | 左键模式 / 右键模式 / 自动优化模式 | 可选：一轮纠错、二轮格式化、一轮 + 二轮 |
-| 自动优化开关 | 默认关闭；打开后转写完成自动执行「自动优化模式」 |
-| 一轮优化 / 二轮优化 / 自动优化快捷键 | 点击输入框后按下组合键录制 |
-| 纠错提示词（第一轮） | 只纠正错别字/口语化，支持 `{{context}}` / `{{text}}` |
-| 格式化提示词（第二轮） | 生成固定格式，不注入上下文；支持 `{{text}}` |
+| 自动优化开关 | 默认关闭；打开后转写完成自动执行「自动优化模式」，无需快捷键 |
+| 一轮提示词（纠错） | 只纠正错别字/口语化，支持 `{{context}}` / `{{text}}` |
+| 二轮提示词（固定格式） | 生成固定格式，不注入上下文；支持 `{{text}}` |
 | 启用右键第二轮优化 | 默认开启；关闭后任何“一轮 + 二轮”模式只执行第一轮 |
 | 模型思考档位 | 关闭 / 低 / 中 / 高，默认**低**：低档思考可显著提高输出准确性，关闭最快；兼容 DeepSeek `thinking` 与 DashScope `enable_thinking` |
 | 注入当前对话上下文 | 默认开启：最近 2 条用户/助手消息完整注入；超长时只保留结尾 800 字，避免丢失最新结论 |
@@ -190,12 +186,15 @@ node scripts/dashscope-realtime-proxy.mjs
   "formatterEndpoint": "https://api.deepseek.com/v1",
   "formatterApiKey": "",
   "formatterModel": "deepseek-chat",
-  "formatterNoThinking": false,
   "formatterThinking": "low",
   "formatterWithContext": true,
   "formatterTwoPassEnabled": true,
   "autoOptimizeEnabled": false,
-  "formatterTemplate": "…{{context}}…{{text}}…"
+  "clickLeftMode": "round1",
+  "clickRightMode": "round1+round2",
+  "autoMode": "round1+round2",
+  "formatterFixTemplate": "…{{context}}…{{text}}…",
+  "formatterFinalTemplate": "…{{text}}…"
 }
 ```
 

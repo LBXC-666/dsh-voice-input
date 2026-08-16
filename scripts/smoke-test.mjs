@@ -97,11 +97,13 @@ if (!tabHtml.includes('formatterGroup')) throw new Error('formatter group missin
 if (!tabHtml.includes('formatterThinking')) throw new Error('thinking level select missing from settings panel')
 if (!/value="low" selected/.test(tabHtml)) throw new Error('thinking level should default to low')
 if (!tabHtml.includes('autoOptimizeEnabled')) throw new Error('auto optimize toggle missing from settings panel')
+if (!tabHtml.includes('formatterFixTemplate') || !tabHtml.includes('formatterFinalTemplate')) throw new Error('round-1/round-2 prompt fields missing from settings panel')
+if (tabHtml.includes('hotkeyPass1') || tabHtml.includes('hotkeyHint') || tabHtml.includes('formatterTemplate')) throw new Error('legacy hotkeys / prompt template must not appear in settings panel')
 console.log('VoiceSettingsPanel HTML length:', tabHtml.length)
 
 const keydown = windowListeners.filter((l) => l.type === 'keydown' && l.fn)
 const keyup = windowListeners.filter((l) => l.type === 'keyup' && l.fn)
-if (keydown.length !== 2) throw new Error('expected two global keydown listeners, got ' + keydown.length)
+if (keydown.length !== 1) throw new Error('expected one global keydown listener (Right Alt only), got ' + keydown.length)
 if (keyup.length !== 1) throw new Error('expected one global keyup listener, got ' + keyup.length)
 let prevented = 0
 const fakeEvent = (overrides) => ({
