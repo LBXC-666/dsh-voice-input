@@ -98,7 +98,7 @@ console.log('VoiceSettingsPanel HTML length:', tabHtml.length)
 
 const keydown = windowListeners.filter((l) => l.type === 'keydown' && l.fn)
 const keyup = windowListeners.filter((l) => l.type === 'keyup' && l.fn)
-if (keydown.length !== 1) throw new Error('expected one global keydown listener, got ' + keydown.length)
+if (keydown.length !== 2) throw new Error('expected two global keydown listeners, got ' + keydown.length)
 if (keyup.length !== 1) throw new Error('expected one global keyup listener, got ' + keyup.length)
 let prevented = 0
 const fakeEvent = (overrides) => ({
