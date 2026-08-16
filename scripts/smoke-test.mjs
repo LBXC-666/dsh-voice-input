@@ -1,5 +1,6 @@
 import { createRequire } from 'node:module'
 import { pathToFileURL } from 'node:url'
+import { readFileSync } from 'node:fs'
 import path from 'node:path'
 
 // React 来自 dsh 的 profile node_modules（或本目录 node_modules），
@@ -41,6 +42,10 @@ globalThis.localStorage = {
 }
 
 await import(pathToFileURL('/home/lbxc/voice_input/lib/client.js').href)
+
+const clientSource = readFileSync('/home/lbxc/voice_input/lib/client.js', 'utf8')
+if (!clientSource.includes('.vi_text-scan') || !clientSource.includes('vi_text_scan')) throw new Error('AI optimize text scan animation is missing')
+console.log('AI optimize text scan animation CSS present')
 
 const hostMod = await import(pathToFileURL('/home/lbxc/voice_input/lib/index.js').href)
 if (JSON.stringify(hostMod.inject) !== '[]' || typeof hostMod.apply !== 'function') throw new Error('host half must export inject=[] and apply()')
