@@ -44,8 +44,8 @@ globalThis.localStorage = {
 await import(pathToFileURL('/home/lbxc/voice_input/lib/client.js').href)
 
 const clientSource = readFileSync('/home/lbxc/voice_input/lib/client.js', 'utf8')
-if (!clientSource.includes('.vi_text-scan') || !clientSource.includes('vi_text_scan')) throw new Error('AI optimize text scan animation is missing')
-console.log('AI optimize text scan animation CSS present')
+if (!clientSource.includes('.vi_text-scan') || !clientSource.includes('vi_text_scan') || !clientSource.includes('.vi_scan-line')) throw new Error('AI optimize text scan animation is missing')
+console.log('AI optimize text scan animation CSS present (line-aware + fallback)')
 
 const hostMod = await import(pathToFileURL('/home/lbxc/voice_input/lib/index.js').href)
 if (JSON.stringify(hostMod.inject) !== '[]' || typeof hostMod.apply !== 'function') throw new Error('host half must export inject=[] and apply()')
