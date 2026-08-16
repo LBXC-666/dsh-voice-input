@@ -135,9 +135,10 @@ node scripts/dashscope-realtime-proxy.mjs
 | 自动优化开关 | 默认关闭；打开后转写完成自动执行「自动优化模式」，无需快捷键 |
 | 一轮提示词（纠错） | 只纠正错别字/口语化，支持 `{{context}}` / `{{text}}` |
 | 二轮提示词（固定格式） | 生成固定格式，不注入上下文；支持 `{{text}}` |
-| 启用第二轮优化 | 默认开启；关闭后任何“一轮 + 二轮”模式只执行第一轮 |
 | 模型思考档位 | 关闭 / 低 / 中 / 高，默认**低**：低档思考可显著提高输出准确性，关闭最快；兼容 DeepSeek `thinking` 与 DashScope `enable_thinking` |
 | 注入当前对话上下文 | 默认开启：最近 2 条用户/助手消息完整注入；超长时只保留结尾 800 字，避免丢失最新结论 |
+
+> 已移除独立的「启用第二轮优化」开关：选择「一轮」就等于只纠错，选择「一轮 + 二轮」就等于先纠错再格式化，模式下拉框已经完整覆盖这两种行为。
 
 默认输出格式：
 
@@ -187,7 +188,6 @@ node scripts/dashscope-realtime-proxy.mjs
   "formatterModel": "deepseek-chat",
   "formatterThinking": "low",
   "formatterWithContext": true,
-  "formatterTwoPassEnabled": true,
   "autoOptimizeEnabled": false,
   "clickLeftMode": "round1",
   "clickRightMode": "round1+round2",

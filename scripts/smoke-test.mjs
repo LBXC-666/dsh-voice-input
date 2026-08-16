@@ -100,6 +100,7 @@ if (!/value="low" selected/.test(tabHtml)) throw new Error('thinking level shoul
 if (!tabHtml.includes('autoOptimizeEnabled')) throw new Error('auto optimize toggle missing from settings panel')
 if (!tabHtml.includes('formatterFixTemplate') || !tabHtml.includes('formatterFinalTemplate')) throw new Error('round-1/round-2 prompt fields missing from settings panel')
 if (tabHtml.includes('hotkeyPass1') || tabHtml.includes('hotkeyHint') || tabHtml.includes('formatterTemplate')) throw new Error('legacy hotkeys / prompt template must not appear in settings panel')
+if (tabHtml.includes('formatterTwoPassEnabled')) throw new Error('second-round toggle was removed and must not appear in settings panel')
 console.log('VoiceSettingsPanel HTML length:', tabHtml.length)
 
 const keydown = windowListeners.filter((l) => l.type === 'keydown' && l.fn)

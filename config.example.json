@@ -21,7 +21,6 @@
   "formatterModel": "deepseek-chat",
   "formatterThinking": "low",
   "formatterWithContext": true,
-  "formatterTwoPassEnabled": true,
   "autoOptimizeEnabled": false,
   "clickLeftMode": "round1",
   "clickRightMode": "round1+round2",
